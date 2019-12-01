@@ -1,40 +1,42 @@
-public class Decoder {
+class Decoder {
 
-    static final char [] upperCaseCyrillic = {'А', 'Б', 'В', 'Г', 'Д', 'Е', 'Ё', 'Ж', 'З', 'И', 'Й', 'К', 'Л', 'M',
-                                              'Н', 'О', 'П', 'Р', 'С', 'Т', 'У', 'Ф', 'Х', 'Ц', 'Ч', 'Ш', 'Щ', 'Ъ',
-                                              'Ы', 'Ь', 'Э', 'Ю', 'Я'};
-    static final char [] lowerCaseCyrillic = {'а', 'б', 'в', 'г', 'д', 'е', 'ё', 'ж', 'з', 'и', 'й', 'к', 'л', 'м',
-                                              'н', 'о', 'п', 'р', 'с', 'т', 'у', 'ф', 'х', 'ц', 'ч', 'ш', 'щ', 'ъ',
-                                              'ы', 'ь', 'э', 'ю', 'я'};
+    private static final char [] upperCaseCyrillic = {'А', 'Б', 'В', 'Г', 'Д', 'Е', 'Ё', 'Ж', 'З', 'И', 'Й', 'К', 'Л', 'М',
+                                                      'Н', 'О', 'П', 'Р', 'С', 'Т', 'У', 'Ф', 'Х', 'Ц', 'Ч', 'Ш', 'Щ', 'Ъ',
+                                                      'Ы', 'Ь', 'Э', 'Ю', 'Я'};
+    private final static int LETTERS_IN_ALPHABET = 33;
 
-    public static String decode(String encodedString, int offset) {
+    static String decode(String encodedString, int offset) {
         int index = 0;
-        offset = offset % 33;
+        offset = offset % LETTERS_IN_ALPHABET;
         StringBuilder decodedString = new StringBuilder();
-        for (char ch : encodedString.toCharArray()) {
-            if (Character.isLetter(ch)) {
-                if (Character.isUpperCase(ch)) {
-                    for (char c: upperCaseCyrillic) {
-                        if (c != ch) {
-                            index++;
-                            continue;
+        if (encodedString != null) {
+            for (char ch : encodedString.toCharArray()) {
+                if (Character.isLetter(ch)) {
+                    if (Character.isUpperCase(ch)) {
+                        for (char c: upperCaseCyrillic) {
+                            if (c != ch) {
+                                index++;
+                                continue;
+                            }
+                            break;
                         }
-                        break;
-                    }
-                    decodedString.append(upperCaseCyrillic[(33 + index - offset) % 33]);
-                    index = 0;
-                } else {
-                    for (char c: lowerCaseCyrillic) {
-                        if (c != ch) {
-                            index++;
-                            continue;
+                        decodedString.append(
+                                upperCaseCyrillic[(LETTERS_IN_ALPHABET + index - offset) % LETTERS_IN_ALPHABET]);
+                        index = 0;
+                    } else {
+                        for (char c: upperCaseCyrillic) {
+                            if (Character.toLowerCase(c) != ch) {
+                                index++;
+                                continue;
+                            }
+                            break;
                         }
-                        break;
+                        decodedString.append(Character.toLowerCase(
+                                upperCaseCyrillic[(LETTERS_IN_ALPHABET + index - offset) % LETTERS_IN_ALPHABET]));
+                        index = 0;
                     }
-                    decodedString.append(lowerCaseCyrillic[(33 + index - offset) % 33]);
-                    index = 0;
-                }
-            } else decodedString.append(ch);
+                } else decodedString.append(ch);
+            }
         }
         return decodedString.toString();
     }
